@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://eletricaph.com/sitemap.xml
+
+# Specific instructions
+Disallow: /assets/
+Allow: /assets/images/
+
+# Contact information
+# PH Elétrica - Phillip Moraes
+# WhatsApp: +55 12 99700-7101
+# Email: phcmoraes.tech@gmail.com
+# Areas: Ubatuba e Paraty - SP

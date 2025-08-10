@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code WhatsApp - PH Elétrica</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1c3d2e, #2d5a3d);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qr-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        
+        .logo {
+            color: #1c3d2e;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .qr-code {
+            margin: 2rem 0;
+        }
+        
+        .qr-code img {
+            border-radius: 10px;
+            border: 3px solid #1c3d2e;
+        }
+        
+        .instructions {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 1rem;
+        }
+        
+        .whatsapp-link {
+            display: inline-block;
+            background: #25d366;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .whatsapp-link:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="qr-container">
+        <div class="logo">📱 PH Elétrica</div>
+        <h2 style="color: #1c3d2e; margin: 0;">WhatsApp QR Code</h2>
+        
+        <div class="qr-code">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://wa.me/5512997007101?text=Olá!%20Me%20chamo%20[SEU_NOME]%20e%20gostaria%20de%20um%20orçamento%20para%20serviço%20elétrico." 
+                 alt="QR Code WhatsApp PH Elétrica">
+        </div>
+        
+        <div class="instructions">
+            <strong>Como usar:</strong><br>
+            1. Abra a câmera do seu celular<br>
+            2. Aponte para o QR Code<br>
+            3. Toque na notificação que aparecer<br>
+            4. Será direcionado para o WhatsApp
+        </div>
+        
+        <a href="https://wa.me/5512997007101?text=Olá!%20Me%20chamo%20[SEU_NOME]%20e%20gostaria%20de%20um%20orçamento%20para%20serviço%20elétrico." 
+           class="whatsapp-link" target="_blank">
+            📲 Abrir WhatsApp Direto
+        </a>
+        
+        <div style="margin-top: 2rem; font-size: 0.8rem; color: #999;">
+            <strong>Phillip Moraes</strong><br>
+            Eletricista • SENAI Taubaté<br>
+            📞 +55 12 99700-7101<br>
+            📍 Ubatuba e Paraty - SP
+        </div>
+    </div>
+</body>
+</html>

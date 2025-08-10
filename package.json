@@ -1,0 +1,13 @@
+{
+  "name": "ph-eletrica",
+  "version": "1.0.0",
+  "description": "Site oficial da PH Elétrica - Phillip Moraes",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "start": "python3 -m http.server 8000"
+  },
+  "keywords": ["eletricista", "ubatuba", "paraty", "phillip", "moraes"],
+  "author": "Phillip Moraes",
+  "license": "MIT"
+}
