@@ -5,9 +5,20 @@
   "main": "index.html",
   "scripts": {
     "dev": "python3 -m http.server 8000",
-    "start": "python3 -m http.server 8000"
+    "start": "python3 -m http.server 8000",
+    "vercel-build": "npm install",
+    "build": "echo 'Build completed'"
   },
-  "keywords": ["eletricista", "ubatuba", "paraty", "phillip", "moraes"],
+  "keywords": [
+    "eletricista",
+    "ubatuba",
+    "paraty",
+    "phillip",
+    "moraes"
+  ],
   "author": "Phillip Moraes",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vercel": "^44.7.3"
+  }
 }
