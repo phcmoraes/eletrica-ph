@@ -1,53 +1,243 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // O código dentro desta função será executado quando o HTML for completamente carregado.
-});
+// Cache de elementos DOM
+const domCache = {
+    heroVideo: document.querySelector('.hero-video'),
+    header: document.querySelector('.main-header'),
+    navToggle: document.querySelector('.nav-toggle'),
+    mainNav: document.querySelector('.main-nav ul'),
+    contactForm: document.getElementById('contact-form'),
+    // Adicione outros elementos frequentemente acessados aqui
+};
 
-function calcular() {
-    console.log("Botão 'Calcular' clicado. A função está sendo chamada.");
-
-    // Aqui vamos adicionar a lógica para pegar os valores dos inputs e fazer os cálculos.
+/**
+ * Inicializa os listeners de eventos quando o DOM estiver pronto
+ */
+function init() {
+    // 1. Controle de vídeo do herói com Intersection Observer
+    initHeroVideo();
+    
+    // 2. Animação do cabeçalho no scroll
+    initHeaderScroll();
+    
+    // 3. Navegação móvel
+    initMobileNav();
+    
+    // 4. Formulário de contato
+    initContactForm();
+    
+    // 5. Funções de acessibilidade
+    initAccessibility();
 }
-    // 1. Hero Video Control (Corrected)
-    const heroVideo = document.querySelector('.hero-video');
-    if (heroVideo) {
-        heroVideo.muted = true; // Essential for autoplay
-        const videoObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    if (heroVideo.paused) {
-                        heroVideo.play().catch(error => {
-                            if (error.name !== 'AbortError') {
-                                console.warn('Video autoplay failed:', error);
-                            }
-                        });
-                    }
-                } else {
-                    if (!heroVideo.paused) {
-                        heroVideo.pause();
-                    }
-                }
-            });
-        });
-    }
 
-    // 2. Header Animation on Scroll
-    const header = document.querySelector('.main-header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
+/**
+ * Inicializa o controle do vídeo do herói com Intersection Observer
+ */
+function initHeroVideo() {
+    if (!domCache.heroVideo) return;
+    
+    // Configurações do Intersection Observer
+    const observerOptions = {
+        root: null,
+        threshold: 0.5,
+        rootMargin: '0px'
+    };
+    
+    const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const video = entry.target;
+            
+            if (entry.isIntersecting) {
+                if (video.paused) {
+                    video.play().catch(error => {
+                        // Suprime erros de autoplay não críticos
+                        if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') {
+                            console.warn('Falha na reprodução automática do vídeo:', error);
+                        }
+                    });
+                }
+            } else if (!video.paused) {
+                video.pause();
+            }
+        });
+    }, observerOptions);
+    
+    // Configura o vídeo para reprodução otimizada
+    domCache.heroVideo.muted = true;
+    domCache.heroVideo.playsInline = true;
+    domCache.heroVideo.setAttribute('playsinline', '');
+    domCache.heroVideo.setAttribute('preload', 'metadata');
+    
+    // Inicia a observação
+    videoObserver.observe(domCache.heroVideo);
+    
+    // Lida com a troca de orientação para evitar problemas de layout
+    window.addEventListener('orientationchange', () => {
+        if (domCache.heroVideo) {
+            domCache.heroVideo.style.height = `${window.innerHeight}px`;
         }
     });
+}
 
-    // 3. Mobile Navigation Toggle
-    const navToggle = document.querySelector('.nav-toggle');
-    const mainNav = document.querySelector('.main-nav ul');
+/**
+ * Inicializa a animação do cabeçalho no scroll
+ */
+function initHeaderScroll() {
+    if (!domCache.header) return;
+    
+    // Otimização de performance com requestAnimationFrame
+    let ticking = false;
+    
+    const updateHeader = () => {
+        if (window.scrollY > 50) {
+            domCache.header.classList.add('scrolled');
+        } else {
+            domCache.header.classList.remove('scrolled');
+        }
+        ticking = false;
+    };
+    
+    const onScroll = () => {
+        if (!ticking) {
+            window.requestAnimationFrame(updateHeader);
+            ticking = true;
+        }
+    };
+    
+    // Usa o passive: true para melhorar a performance do scroll
+    window.addEventListener('scroll', onScroll, { passive: true });
+    
+    // Verificação inicial
+    updateHeader();
+}
 
-    if (navToggle && mainNav) {
-        navToggle.addEventListener('click', () => {
-            mainNav.classList.toggle('active');
+/**
+ * Inicializa a navegação móvel
+ */
+function initMobileNav() {
+    if (!domCache.navToggle || !domCache.mainNav) return;
+    
+    // Adiciona classe para indicar suporte a JavaScript
+    document.documentElement.classList.add('js-enabled');
+    
+    // Toggle do menu móvel
+    const toggleMenu = (e) => {
+        e.preventDefault();
+        domCache.mainNav.classList.toggle('active');
+        domCache.navToggle.setAttribute(
+            'aria-expanded',
+            domCache.navToggle.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
+        );
+    };
+    
+    // Adiciona atributos ARIA para acessibilidade
+    domCache.navToggle.setAttribute('aria-expanded', 'false');
+    domCache.navToggle.setAttribute('aria-controls', 'main-navigation');
+    domCache.navToggle.setAttribute('aria-label', 'Alternar navegação');
+    domCache.mainNav.id = 'main-navigation';
+    
+    // Adiciona o evento de clique
+    domCache.navToggle.addEventListener('click', toggleMenu);
+    
+    // Fecha o menu ao clicar em um link
+    const navLinks = domCache.mainNav.querySelectorAll('a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (domCache.mainNav.classList.contains('active')) {
+                domCache.mainNav.classList.remove('active');
+                domCache.navToggle.setAttribute('aria-expanded', 'false');
+            }
         });
+    });
+}
+
+/**
+ * Inicializa o formulário de contato
+ */
+function initContactForm() {
+    if (!domCache.contactForm) return;
+    
+    // Validação do formulário
+    domCache.contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Aqui você pode adicionar validação personalizada
+        const formData = new FormData(domCache.contactForm);
+        const formValues = Object.fromEntries(formData.entries());
+        
+        // Validação básica
+        let isValid = true;
+        const requiredFields = ['nome', 'email', 'mensagem'];
+        
+        requiredFields.forEach(field => {
+            if (!formValues[field]?.trim()) {
+                isValid = false;
+                const input = domCache.contactForm.querySelector(`[name="${field}"]`);
+                if (input) {
+                    input.classList.add('error');
+                }
+            }
+        });
+        
+        if (isValid) {
+            // Aqui você pode adicionar o código para enviar o formulário
+            console.log('Formulário válido, enviando...', formValues);
+            // Exemplo: sendContactForm(formValues);
+        } else {
+            console.warn('Por favor, preencha todos os campos obrigatórios.');
+        }
+    });
+    
+    // Remove a classe de erro ao digitar
+    const formInputs = domCache.contactForm.querySelectorAll('input, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            if (input.value.trim()) {
+                input.classList.remove('error');
+            }
+        });
+    });
+}
+
+/**
+ * Inicializa melhorias de acessibilidade
+ */
+function initAccessibility() {
+    // Adiciona suporte a teclado para elementos interativos
+    document.addEventListener('keydown', (e) => {
+        // Fecha o menu ao pressionar ESC
+        if (e.key === 'Escape' && domCache.mainNav?.classList.contains('active')) {
+            domCache.mainNav.classList.remove('active');
+            if (domCache.navToggle) {
+                domCache.navToggle.setAttribute('aria-expanded', 'false');
+                domCache.navToggle.focus();
+            }
+        }
+    });
+    
+    // Adiciona foco visível para elementos interativos
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'Tab') {
+            document.documentElement.classList.add('keyboard-nav');
+        }
+    });
+    
+    document.addEventListener('mousedown', () => {
+        document.documentElement.classList.remove('keyboard-nav');
+    });
+}
+
+// Inicializa o script quando o DOM estiver pronto
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    // DOM já está pronto
+    init();
+}
+
+// Função para o cálculo (se necessário)
+function calcular() {
+    console.log("Função de cálculo chamada");
+    // Implemente a lógica de cálculo aqui
+}
     }
 
     // 4. Smooth Scroll for Anchor Links
@@ -172,7 +362,18 @@ function sendWhatsApp() {
         return;
     }
 
-    const text = `Olá, me chamo ${name} e gostaria de um orçamento para serviço elétrico em ${city}. Detalhes: ${message}`;
-    const whatsappUrl = `https://wa.me/55${whatsapp}?text=${encodeURIComponent(text)}`;
+    // Número da empresa (substitua pelo número correto com DDD)
+    const empresaWhatsApp = '5512997007101'; // Número formatado para link do WhatsApp
+    
+    // Mensagem formatada para o WhatsApp
+    const text = `*Nova mensagem de orçamento*\n\n` +
+                 `*Nome:* ${name}\n` +
+                 `*WhatsApp:* ${whatsapp}\n` +
+                 `*Cidade:* ${city}\n` +
+                 `*Serviço:* ${service}\n\n` +
+                 `*Mensagem:*\n${message}`;
+    
+    // Abre o WhatsApp com a mensagem pré-preenchida
+    const whatsappUrl = `https://wa.me/${empresaWhatsApp}?text=${encodeURIComponent(text)}`;
     window.open(whatsappUrl, '_blank');
 }
